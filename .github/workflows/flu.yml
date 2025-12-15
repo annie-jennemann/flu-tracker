@@ -42,7 +42,6 @@ jobs:
           key: ${{ runner.os }}-R-${{ hashFiles('**/scripts/*.R') }}
           restore-keys: |
             ${{ runner.os }}-R-
-
       - name: Install R packages
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -50,14 +49,10 @@ jobs:
           mkdir -p ~/Rlib
           echo 'R_LIBS_USER=~/Rlib' >> ~/.Renviron
           echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> ~/.Rprofile
-
-          Rscript -e 'install.packages("tidyverse", dependencies=TRUE, lib="~/Rlib")'
-          Rscript -e 'install.packages(c("jsonlite","remotes","magick","usethis"), dependencies=TRUE, lib="~/Rlib")'
-
-          Rscript -e 'remotes::install_github("hrbrmstr/cdcfluview", lib="~/Rlib", upgrade="never")'
-
+          Rscript -e 'install.packages("tidyverse", dependencies = TRUE, lib="~/Rlib")'
+          Rscript -e 'install.packages(c("jsonlite", "remotes", "magick", "usethis"), dependencies = TRUE, lib="~/Rlib")'
           Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
-          Rscript -e '.libPaths("~/Rlib"); if (!requireNamespace("cdcfluview", lib.loc="~/Rlib", quietly=TRUE)) stop("cdcfluview did not install")'
+          Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
 
       - name: Run R script
         env:
