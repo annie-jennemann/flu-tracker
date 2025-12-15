@@ -53,8 +53,6 @@ jobs:
           Rscript -e 'install.packages(c("jsonlite", "remotes", "magick", "usethis"), dependencies = TRUE, lib="~/Rlib")'
           Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
           Rscript -e 'remotes::install_git("https://git.rud.is/hrbrmstr/cdcfluview.git", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
-          Rscript -e 'remotes::install_git("https://gitlab.com/hrbrmstr/cdcfluview", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))
-          Rscript -e 'remotes::install_github("hrbrmstr/cdcfluview", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))
           Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
 
       - name: Run R script
