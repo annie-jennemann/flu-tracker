@@ -46,6 +46,7 @@ jobs:
       - name: Install R packages
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+          R_LIBS_USER: ~/Rlib
         run: |
           mkdir -p ~/Rlib
           echo 'R_LIBS_USER=~/Rlib' >> ~/.Renviron
@@ -53,17 +54,18 @@ jobs:
           Rscript -e 'install.packages("tidyverse", dependencies = TRUE, lib="~/Rlib")'
           Rscript -e 'install.packages(c("jsonlite", "remotes", "magick", "usethis"), dependencies = TRUE, lib="~/Rlib")'
           Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
-          Rscript -e 'remotes::install_github("hrbrmstr/cdcfluview", upgrade="never")'
-          Rscript -e 'library(cdcfluview); packageVersion("cdcfluview")'
-          Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
+          Rscript -e '.libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths())); install.packages(c("remotes","units","sf"), dependencies=TRUE)'
+          Rscript -e '.libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths())); remotes::install_github("hrbrmstr/cdcfluview")'
+          Rscript -e '.libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths())); library(cdcfluview); packageVersion("cdcfluview")'
 
       - name: Run R script
         env:
+           R_LIBS_USER: ~/Rlib
           API_KEY: ${{ secrets.API_KEY }}
           CHART_CODE1: ${{ secrets.CHART_CODE1 }}
           CHART_CODE2: ${{ secrets.CHART_CODE2 }}
         run: |
-          . ~/.Renviron
+          Rscript -e '.libPaths(c(Sys.getenv("R_LIBS_USER"), .libPaths())); print(.libPaths())'
           Rscript "scripts/flu-scraper.R"
 
 
