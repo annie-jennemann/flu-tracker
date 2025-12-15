@@ -5,8 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron:  "0 9-23 * * FRI"
-    
+    - cron: "0 9-23 * * FRI"
   workflow_dispatch:
 
 jobs:
@@ -33,7 +32,14 @@ jobs:
             libfribidi-dev \
             libfontconfig1-dev \
             pandoc \
-            git
+            git \
+            libudunits2-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev \
+            proj-data \
+            proj-bin \
+            gdal-bin
 
       - name: Cache R packages
         uses: actions/cache@v4
@@ -42,6 +48,7 @@ jobs:
           key: ${{ runner.os }}-R-${{ hashFiles('**/scripts/*.R') }}
           restore-keys: |
             ${{ runner.os }}-R-
+
       - name: Install R packages
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -49,11 +56,15 @@ jobs:
           mkdir -p ~/Rlib
           echo 'R_LIBS_USER=~/Rlib' >> ~/.Renviron
           echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> ~/.Rprofile
-          Rscript -e 'install.packages("tidyverse", dependencies = TRUE, lib="~/Rlib")'
-          Rscript -e 'install.packages(c("jsonlite", "remotes", "magick", "usethis", "remotes", "sf", "units"), dependencies = TRUE, lib="~/Rlib")'
-          Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
-          Rscript -e 'remotes::install_github("hrbrmstr/cdcfluview")'
-          Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
+
+          # Make sure installs + library() calls use your cached library
+          Rscript -e '.libPaths("~/Rlib"); install.packages("tidyverse", dependencies = TRUE, lib="~/Rlib")'
+          Rscript -e '.libPaths("~/Rlib"); install.packages(c("jsonlite","remotes","magick","usethis","sf","units"), dependencies = TRUE, lib="~/Rlib")'
+
+          Rscript -e '.libPaths("~/Rlib"); remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
+          Rscript -e '.libPaths("~/Rlib"); remotes::install_github("hrbrmstr/cdcfluview", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
+
+          Rscript -e '.libPaths("~/Rlib"); if (!requireNamespace("cdcfluview", quietly=TRUE)) stop("cdcfluview did not install")'
 
       - name: Run R script
         env:
@@ -63,7 +74,3 @@ jobs:
         run: |
           . ~/.Renviron
           Rscript "scripts/flu-scraper.R"
-
-
-
-
