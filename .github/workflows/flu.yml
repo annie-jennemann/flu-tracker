@@ -59,12 +59,11 @@ jobs:
       - name: Run R script
         env:
           API_KEY: ${{ secrets.API_KEY }}
-          CHART_KEY: ${{ secrets.CHART_KEY }}
-          CHART_KEY1: ${{ secrets.CHART_KEY1 }}
-          CHART_KEY2: ${{ secrets.CHART_KEY2 }}
+          CHART_CODE1: ${{ secrets.CHART_CODE1 }}
+          CHART_CODE2: ${{ secrets.CHART_CODE2 }}
         run: |
           . ~/.Renviron
-          Rscript "scripts/measles.R"
+          Rscript "scripts/flu-scraper.R"
 
 
 
