@@ -60,7 +60,7 @@ jobs:
 
       - name: Run R script
         env:
-           R_LIBS_USER: ~/Rlib
+          R_LIBS_USER: ~/Rlib
           API_KEY: ${{ secrets.API_KEY }}
           CHART_CODE1: ${{ secrets.CHART_CODE1 }}
           CHART_CODE2: ${{ secrets.CHART_CODE2 }}
