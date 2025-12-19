@@ -40,9 +40,9 @@ datawrapper_auth(api_key =  api_key, overwrite=TRUE)
 
 ### Getting dates
 
-date <- recent_flu %>% filter(statename == "Alaska") %>% select(weekend) %>% mutate(weekend = gsub("(\\D)0", "\\1", format(weekend, format = "%B %d")))
+date <- recent_flu %>% filter(statename == "Maryland") %>% select(weekend) %>% mutate(weekend = gsub("(\\D)0", "\\1", format(weekend, format = "%B %d")))
 
-last_week <- last_week_flu %>% filter(statename == "Alaska") %>% select(last_weekend) %>% mutate(last_weekend = gsub("(\\D)0", "\\1", format(last_weekend, format = "%B -%d")))
+last_week <- last_week_flu %>% filter(statename == "Maryland") %>% select(last_weekend) %>% mutate(last_weekend = gsub("(\\D)0", "\\1", format(last_weekend, format = "%B -%d")))
 
 ### data to map
 
@@ -71,7 +71,7 @@ dw_edit_chart(
         "Low" = "#fcd259",
         "Moderate" = "#d18900",
         "High" = "#cf3d34",
-        "Very high" = "#580001"
+        "Very High" = "#580001"
       )
     )
   )
@@ -111,7 +111,7 @@ count_moderate <- table_flu %>% filter(`Most recent` == "Moderate") %>% summaris
 
 count_high <- table_flu %>% filter(`Most recent` == "High") %>% summarise(count_high = n())
 
-count_veryhigh <- table_flu %>% filter(`Most recent` == "Very high") %>% summarise(count_veryhigh = n())
+count_veryhigh <- table_flu %>% filter(`Most recent` == "Very High") %>% summarise(count_veryhigh = n())
 
 ### Push to chart
 
@@ -120,7 +120,7 @@ common_colors <- list(
   "Low"       = "#fcd259",
   "Moderate"  = "#d18900",
   "High"      = "#cf3d34",
-  "Very high" = "#580001"
+  "Very High" = "#580001"
 )
 
 dw_edit_chart(
